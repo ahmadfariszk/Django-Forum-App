@@ -8,6 +8,6 @@ class User(AbstractUser):
     # Use the email for authentication instead of the username
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'name']
-    
+    # no need to decalre password as its already in the deafult class
     def __str__(self):
         return self.email
