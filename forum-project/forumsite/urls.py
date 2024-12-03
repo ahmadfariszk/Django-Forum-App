@@ -17,11 +17,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from users.api import api as users_api
+from posts.api import api as posts_api
+from comments.api import api as comments_api
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
     path('posts/', include('posts.urls')),
     path('comments/', include('comments.urls')),
-    path("api/", users_api.urls),
+    path("api/users/", users_api.urls),  # Users API
+    path("api/posts/", posts_api.urls),  # Posts API
+    path("api/comments/", comments_api.urls),  # Comments API
 ]
