@@ -8,6 +8,8 @@ import {
 import type { LinksFunction } from "@remix-run/node";
 
 import "./tailwind.css";
+import { Header } from "./shared/components/Header";
+import { mockUser } from "./test/mockData";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -22,6 +24,7 @@ export const links: LinksFunction = () => [
   },
 ];
 
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -32,6 +35,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <Header user={mockUser} />
         {children}
         <ScrollRestoration />
         <Scripts />

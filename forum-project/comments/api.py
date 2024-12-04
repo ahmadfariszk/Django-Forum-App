@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 
 router = Router()
 
+# 
 @router.post("/comments", response=CommentSerializer)
 def create_comment(request, data: CommentSerializer):
     post = get_object_or_404(Post, id=data.post)

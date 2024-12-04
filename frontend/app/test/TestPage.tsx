@@ -1,7 +1,7 @@
-import { Button } from "~/shared/components/Button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/shared/components/Card"
-import { Input } from "~/shared/components/Input"
-import { Label } from "~/shared/components/Label"
+import { Button } from "~/shared/shadcn-ui/Button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/shared/shadcn-ui/Card"
+import { Input } from "~/shared/shadcn-ui/Input"
+import { Label } from "~/shared/shadcn-ui/Label"
 
 export const TestPage = () => {
     return(
