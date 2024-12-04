@@ -54,8 +54,12 @@ def get_posts(request, page_size: int = 10):
 # Get a single post
 @api.get("/get/{post_id}", response=PostSerializer)
 def get_post(request, post_id: int):
-    post = Post.objects.annotate(comment_count=Count('comments')).get(id=post_id)
-    return post
+    post = Post.objects.annotate(comment_count=Count('comments')) \
+                       .select_related('user') \
+                       .get(id=post_id)
+    post_data = PostSerializer.from_orm(post).dict()
+    post_data['username'] = post.user.username
+    return post_data
 
 # update a post
 @api.put("/update/{post_id}", response=PostSerializer, auth=JWTAuth())

@@ -46,8 +46,10 @@ def get_comments(request):
 # Get a single comment
 @api.get("/get/{comment_id}", response=CommentSerializer)
 def get_comment(request, comment_id: int):
-    comment = get_object_or_404(Comment, id=comment_id)
-    return comment
+    comment = get_object_or_404(Comment.objects.select_related('user'), id=comment_id)
+    comment_data = CommentSerializer.from_orm(comment).dict()
+    comment_data['username'] = comment.user.username 
+    return comment_data
 
 # Get number of comments for a post ID
 @api.get("/getnumber/{post_id}", response={200: int})
