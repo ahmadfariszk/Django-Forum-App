@@ -42,6 +42,12 @@ def get_comment(request, comment_id: int):
     comment = get_object_or_404(Comment, id=comment_id)
     return comment
 
+# Get number of comments for a post ID
+@api.get("/getnumber/{post_id}", response={200: int})
+def get_comments(request, post_id: int):
+    comments_count = Comment.objects.filter(post_id=post_id).count()
+    return 200, comments_count
+
 # Update a comment
 @api.put("/update/{comment_id}", response=CommentSerializer, auth=JWTAuth())
 def update_comment(request, comment_id: int, data: CommentSerializer):
