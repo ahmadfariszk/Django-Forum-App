@@ -6,7 +6,7 @@ from typing import List
 from ninja.pagination import paginate
 from ninja_jwt.authentication import JWTAuth
 from django.http import JsonResponse
-
+from typing import Dict
 
 api = NinjaAPI(urls_namespace="posts_api")
 
@@ -46,19 +46,41 @@ def get_post(request, post_id: int):
     return post
 
 # update a post
-@api.put("/update/{post_id}", response=PostSerializer)
+@api.put("/update/{post_id}", response=PostSerializer, auth=JWTAuth())
 def update_post(request, post_id: int, data: PostSerializer):
-    post = Post.objects.get(id=post_id)
-    if post.user != request.user:
-        return 403, {"message": "You do not have permission to update this post."}
-    for attr, value in data.dict().items():
-        setattr(post, attr, value)
+    user: User = request.user
+
+    if not user.is_authenticated:
+        return JsonResponse({'detail': 'User is not logged in'}, status=401)
+
+    try:
+        post = Post.objects.get(id=post_id)
+    except Post.DoesNotExist:
+        return JsonResponse({'detail': 'Post not found'}, status=404)
+
+    # Update the post fields
+    post.title = data.title
+    post.caption = data.caption
+    if hasattr(data, 'image_url') and data.image_url:
+        post.image_url = data.image_url
     post.save()
-    return post
+
+    # Serialize and return the updated post
+    post_dict = {
+        "id": post.id,
+        "title": post.title,
+        "caption": post.caption,
+        "image_url": post.image_url,
+    }
+
+    # Use the Pydantic model to validate/serialize the data
+    serialized_post = PostSerializer(**post_dict)
+    return serialized_post.dict()
 
 # delete a post
-@api.delete("/delete/{post_id}", response={200: str, 404: str})
+@api.delete("/delete/{post_id}", response={200: Dict[str, str], 404: Dict[str, str], 403: Dict[str, str]}, auth=JWTAuth())
 def delete_post(request, post_id: int):
+    user: User = request.user
     try:
         post = Post.objects.get(id=post_id)
         if post.user != request.user:
