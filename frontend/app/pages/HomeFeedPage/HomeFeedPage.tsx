@@ -2,6 +2,7 @@ import { useNavigate } from "@remix-run/react";
 import { Loader } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { CreatePostOrCommentCard } from "~/shared/components/CreatePostOrCommentCard";
+import PaginationWithData from "~/shared/components/PaginationWithData";
 import { PostsCard } from "~/shared/components/PostsCard";
 import { Post } from "~/shared/types/general";
 import { mockPosts } from "~/test/mockData";
@@ -69,6 +70,7 @@ export const HomeFeedPage = () => {
             />
           </div>
         ))}
+      <PaginationWithData />
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { Loader } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { CommentCard } from "~/shared/components/CommentCard";
 import { CreatePostOrCommentCard } from "~/shared/components/CreatePostOrCommentCard";
+import PaginationWithData from "~/shared/components/PaginationWithData";
 import { PostsCard } from "~/shared/components/PostsCard";
 import { Comment, Post } from "~/shared/types/general";
 import { mockComments, mockPosts } from "~/test/mockData";
@@ -98,6 +99,8 @@ export const IndividualPostPage = () => {
             createdAt={comment.created_at}
           />
         ))}
+
+      <PaginationWithData />
     </div>
   );
 };

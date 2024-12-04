@@ -4,14 +4,20 @@ import { Label } from "../shadcn-ui/Label";
 import { Input } from "../shadcn-ui/Input";
 
 type InputProps = React.ComponentProps<"input"> & {
-    label?: string;
+  label?: string;
+  error?: string;
 };
 
 export const InputWithLabel = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, label, ...props }, ref) => {
-    return <div className={cn("flex flex-col my-2", className)}>
+  ({ className, type, label, error, ...props }, ref) => {
+    return (
+      <div className={cn("flex flex-col my-2", className)}>
         <Label>{label}</Label>
         <Input {...props} type={type} />
-    </div>
+        {error && (
+          <Label className="text-red-500 text-xs -mt-0.5">{error}</Label>
+        )}
+      </div>
+    );
   }
 );

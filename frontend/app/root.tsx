@@ -4,6 +4,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
 
@@ -24,8 +25,10 @@ export const links: LinksFunction = () => [
   },
 ];
 
-
 export function Layout({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+  const shouldShowHeader = !["/login", "/signup"].includes(location.pathname);
+
   return (
     <html lang="en">
       <head>
@@ -35,7 +38,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Header user={mockUser} />
+        {shouldShowHeader && <Header user={mockUser} />}
         {children}
         <ScrollRestoration />
         <Scripts />
