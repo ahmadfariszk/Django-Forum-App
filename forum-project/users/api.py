@@ -4,7 +4,7 @@ from .serializers import UserSerializer  # Define this later
 from django.shortcuts import get_object_or_404
 from typing import List
 
-api = NinjaAPI()
+api = NinjaAPI(urls_namespace="users_api")
 
 @api.get("/users", response=List[UserSerializer])
 def list_users(request):

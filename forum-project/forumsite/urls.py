@@ -25,7 +25,7 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('posts/', include('posts.urls')),
     path('comments/', include('comments.urls')),
-    path("api/users/", users_api.urls),  # Users API
-    path("api/posts/", posts_api.urls),  # Posts API
-    path("api/comments/", comments_api.urls),  # Comments API
+    path("api/users/", users_api.urls),  
+    path("api/posts/", posts_api.urls),  
+    path("api/comments/", comments_api.urls),  
 ]
