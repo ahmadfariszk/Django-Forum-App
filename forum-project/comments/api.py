@@ -34,6 +34,8 @@ def get_comment(request, comment_id: int):
 @api.put("/comments/{comment_id}", response=CommentSerializer)
 def update_comment(request, comment_id: int, data: CommentSerializer):
     comment = get_object_or_404(Comment, id=comment_id)
+    if comment.user != request.user:
+        return 403, {"message": "You do not have permission to update this comment."}
     comment.content = data.content
     comment.save()
     return comment
@@ -43,6 +45,8 @@ def update_comment(request, comment_id: int, data: CommentSerializer):
 def delete_comment(request, comment_id: int):
     try:
         comment = get_object_or_404(Comment, id=comment_id)
+        if comment.user != request.user:
+            return 403, {"message": "You do not have permission to delete this comment."}
         comment.delete()
         return 200, {"message": "Comment deleted successfully"}
     except Comment.DoesNotExist:
