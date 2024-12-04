@@ -6,3 +6,4 @@ class UserSerializer(Schema):
     username: str
     email: str
     name: str
+    password: str  # This will be hashed later
