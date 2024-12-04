@@ -22,7 +22,14 @@ module.exports = {
   ignorePatterns: ["!**/.server", "!**/.client"],
 
   // Base config
-  extends: ["eslint:recommended","plugin:import/typescript",],
+  extends: ["eslint:recommended"],
+
+  "@typescript-eslint/no-empty-interface": [
+      "error",
+      {
+        allowSingleExtends: true,
+      },
+    ],
 
   overrides: [
     // React
@@ -55,6 +62,9 @@ module.exports = {
       files: ["**/*.{ts,tsx}"],
       plugins: ["@typescript-eslint", "import"],
       parser: "@typescript-eslint/parser",
+      parserOptions: {
+        "project": "./frontend/tsconfig.json"
+      },
       settings: {
         "import/internal-regex": "^~/",
         "import/resolver": {
@@ -65,9 +75,18 @@ module.exports = {
             alwaysTryTypes: true,
           },
         },
+        "import/parsers": {
+          "@typescript-eslint/parser": [".ts", ".tsx"]
+        },
+      },
+      rules: {
+        "no-unused-vars" : "warn",
+        "@typescript-eslint/no-unused-vars" : "warn",
+        "import/no-unresolved" : "warn"
       },
       extends: [
         "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
         "plugin:import/recommended",
         "plugin:import/typescript",
       ],
