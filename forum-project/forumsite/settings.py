@@ -26,8 +26,26 @@ SECRET_KEY = 'django-insecure-m+jwz=)@32edn+tx6=t6q(gbin5(4+ao5@=1)tv61=2p*7rbge
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+APPEND_SLASH=False
+
 ALLOWED_HOSTS = []
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Frontend URL
+]
+
+# Allow these HTTP methods for CORS requests
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS',
+]
+
+# Allow credentials like cookies, Authorization headers, etc.
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
@@ -43,6 +61,7 @@ INSTALLED_APPS = [
     'comments',
     'rest_framework',
     'rest_framework_simplejwt',  
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +72,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'forumsite.urls'

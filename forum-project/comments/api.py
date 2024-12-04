@@ -33,8 +33,15 @@ def create_comment(request, data: CommentSerializer):
 @api.get("/getall", response=List[CommentSerializer])
 @paginate()
 def get_comments(request):
-    comments = Comment.objects.all()
-    return comments
+    comments = Comment.objects\
+        .select_related('user')
+    serialized_comments = []
+    for comment in comments:
+        comment_data = CommentSerializer.from_orm(comment).dict()
+        comment_data['username'] = comment.user.username 
+        # print(comment_data) 
+        serialized_comments.append(comment_data)
+    return serialized_comments 
 
 # Get a single comment
 @api.get("/get/{comment_id}", response=CommentSerializer)

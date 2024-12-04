@@ -16,7 +16,7 @@ def get_user(request, user_id: int):
     user = get_object_or_404(User, id=user_id)
     return user
 
-@api.post("/create", response=UserSerializer)
+@api.post("/create")
 def create_user(request, payload: UserSerializer):
     # Hash the password before saving the user
     hashed_password = make_password(payload.password)
@@ -29,7 +29,7 @@ def create_user(request, payload: UserSerializer):
         password=hashed_password
     )
     
-    return user
+    return 200, {"message": "Account has been successfully created!", "statusCode": 200}
 
 @api.put("/update/{user_id}", response=UserSerializer) # needs fixing, user.user is causing issues
 def update_user(request, user_id: int, payload: UserSerializer):

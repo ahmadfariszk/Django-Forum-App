@@ -37,8 +37,19 @@ def create_post(request, data: PostSerializer):
 @api.get("/getall", response=List[PostSerializer])
 @paginate()
 def get_posts(request, page_size: int = 10):
-    posts = Post.objects.annotate(comment_count=Count('comments')).all()
-    return posts
+    posts = Post.objects.annotate(comment_count=Count('comments'))\
+        .select_related('user')
+    # Manually add username/datetimes to the serialized data
+    serialized_posts = []
+    for post in posts:
+        post_data = PostSerializer.from_orm(post).dict()
+        post_data['username'] = post.user.username 
+        # attempt at fixing the datetime response, still not working
+        # post_data['created_at'] = post.created_at.isoformat() if post.created_at else None
+        # post_data['updated_at'] = post.updated_at.isoformat() if post.updated_at else None
+        # print(post_data) 
+        serialized_posts.append(post_data)
+    return serialized_posts
 
 # Get a single post
 @api.get("/get/{post_id}", response=PostSerializer)
