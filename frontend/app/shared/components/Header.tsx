@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@remix-run/react";
 import React, { useEffect } from "react";
-import { User } from "../types/general";
+import { User } from "../constants/modelTypes";
 import { LogOut, Podcast } from "lucide-react";
 import IconButton from "./IconButton";
 

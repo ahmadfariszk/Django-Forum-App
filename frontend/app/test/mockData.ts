@@ -1,4 +1,4 @@
-import { Comment, Post, User } from "~/shared/types/general";
+import { Comment, Post, User } from "~/shared/constants/modelTypes";
 
 export const mockPosts: Post[] = [
   {

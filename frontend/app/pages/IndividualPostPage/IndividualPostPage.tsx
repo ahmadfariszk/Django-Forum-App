@@ -5,7 +5,7 @@ import { CommentCard } from "~/shared/components/CommentCard";
 import { CreatePostOrCommentCard } from "~/shared/components/CreatePostOrCommentCard";
 import PaginationWithData from "~/shared/components/PaginationWithData";
 import { PostsCard } from "~/shared/components/PostsCard";
-import { Comment, Post } from "~/shared/types/general";
+import { Comment, Post } from "~/shared/constants/modelTypes";
 import { mockComments, mockPosts } from "~/test/mockData";
 
 export const IndividualPostPage = () => {

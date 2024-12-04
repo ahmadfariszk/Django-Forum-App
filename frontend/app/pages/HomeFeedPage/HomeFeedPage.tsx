@@ -4,7 +4,8 @@ import React, { useEffect, useState } from "react";
 import { CreatePostOrCommentCard } from "~/shared/components/CreatePostOrCommentCard";
 import PaginationWithData from "~/shared/components/PaginationWithData";
 import { PostsCard } from "~/shared/components/PostsCard";
-import { Post } from "~/shared/types/general";
+import { BASE_API_URL } from "~/shared/constants/apiTypes";
+import { Post } from "~/shared/constants/modelTypes";
 import { mockPosts } from "~/test/mockData";
 
 export const HomeFeedPage = () => {
@@ -16,13 +17,14 @@ export const HomeFeedPage = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        // const response = await fetch("https://api.example.com/posts"); // Replace with your actual API endpoint
-        // if (!response.ok) {
-        //   throw new Error(`Error fetching posts: ${response.status}`);
-        // }
-        // const data = await response.json();
-        const data = mockPosts; // Replace fetch with mock data
-        setPosts(data);
+        const response = await fetch(`${BASE_API_URL}/api/posts/getall`);
+        if (!response.ok) {
+          throw new Error(`Error fetching posts: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log(data);
+        // const data = mockPosts; // Replace fetch with mock data
+        setPosts(data.items);
       } catch (err: any) {
         setError(err.message || "An unexpected error occurred");
       } finally {
@@ -51,7 +53,7 @@ export const HomeFeedPage = () => {
       {!isLoading && !error && posts.length === 0 && <p>No posts available.</p>}
       {!isLoading &&
         !error &&
-        posts.map((post) => (
+        posts?.map((post) => (
           <div className="pb-4">
             <PostsCard
               title={post.title}
@@ -60,7 +62,7 @@ export const HomeFeedPage = () => {
               imageUrl={post.image_url}
               caption={post.caption}
               createdAt={post.created_at}
-              totalComments={post.totalComments}
+              totalComments={post.comment_count}
               onClickComment={() => {
                 handleClickComment(post.id);
               }}

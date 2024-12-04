@@ -9,7 +9,7 @@ export type Post = {
     caption: string | null;
     created_at: string; // ISO 8601 string from the backend
     updated_at: string; // ISO 8601 string from the backend
-    totalComments: number;
+    comment_count: number;
     title: string;
   }
 
