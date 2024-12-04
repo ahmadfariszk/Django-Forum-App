@@ -6,21 +6,21 @@ from typing import List
 
 api = NinjaAPI()
 
-@api.get("/users", response=List[UserSerializer])
+@api.get("/getall", response=List[UserSerializer])
 def list_users(request):
     return User.objects.all()
 
-@api.get("/users/{user_id}", response=UserSerializer)
+@api.get("/get/{user_id}", response=UserSerializer)
 def get_user(request, user_id: int):
     user = get_object_or_404(User, id=user_id)
     return user
 
-@api.post("/users", response=UserSerializer)
+@api.post("/create", response=UserSerializer)
 def create_user(request, payload: UserSerializer):
     user = User.objects.create(**payload.dict())
     return user
 
-@api.put("/users/{user_id}", response=UserSerializer)
+@api.put("/update/{user_id}", response=UserSerializer) # needs fixing, user.user is causing issues
 def update_user(request, user_id: int, payload: UserSerializer):
     user = get_object_or_404(User, id=user_id)
     if user.user != request.user:
@@ -30,7 +30,7 @@ def update_user(request, user_id: int, payload: UserSerializer):
     user.save()
     return user
 
-@api.delete("/users/{user_id}")
+@api.delete("/delete/{user_id}") # needs fixing, user.user is causing issues
 def delete_user(request, user_id: int):
     user = get_object_or_404(User, id=user_id)
     if user.user != request.user:
