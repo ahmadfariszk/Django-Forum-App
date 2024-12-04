@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from ninja.pagination import paginate
 from django.http import JsonResponse
 from ninja_jwt.authentication import JWTAuth
+from typing import Dict
 
 api = NinjaAPI(urls_namespace="comments_api")
 
@@ -29,31 +30,44 @@ def create_comment(request, data: CommentSerializer):
         return JsonResponse({'detail': 'User is not logged in'}, status=401)
 
 # Get a list of comments
-@api.get("/comments", response=List[CommentSerializer])
+@api.get("/getall", response=List[CommentSerializer])
 @paginate()
 def get_comments(request):
     comments = Comment.objects.all()
     return comments
 
 # Get a single comment
-@api.get("/comments/{comment_id}", response=CommentSerializer)
+@api.get("/get/{comment_id}", response=CommentSerializer)
 def get_comment(request, comment_id: int):
     comment = get_object_or_404(Comment, id=comment_id)
     return comment
 
 # Update a comment
-@api.put("/comments/{comment_id}", response=CommentSerializer)
+@api.put("/update/{comment_id}", response=CommentSerializer, auth=JWTAuth())
 def update_comment(request, comment_id: int, data: CommentSerializer):
-    comment = get_object_or_404(Comment, id=comment_id)
-    if comment.user != request.user:
-        return 403, {"message": "You do not have permission to update this comment."}
-    comment.content = data.content
+    user: User = request.user
+    if not user.is_authenticated:
+        return JsonResponse({'detail': 'User is not logged in'}, status=401)
+    try:
+        comment = Comment.objects.get(id=comment_id)
+    except Comment.DoesNotExist:
+        return JsonResponse({'detail': 'Post not found'}, status=404)
+    
+    # Update the coemmnt fields
+    comment.text = data.text
     comment.save()
-    return comment
+    comment_dict = {
+        "id": comment.id,
+        "text": comment.text,
+        "post_id": comment.post_id,
+    }
+    serialized_post = CommentSerializer(**comment_dict)
+    return serialized_post.dict()
 
 # Delete a comment
-@api.delete("/comments/{comment_id}", response={200: str, 404: str})
+@api.delete("/delete/{comment_id}", response={200: Dict[str, str], 404: Dict[str, str], 403: Dict[str, str]}, auth=JWTAuth())
 def delete_comment(request, comment_id: int):
+    user: User = request.user
     try:
         comment = get_object_or_404(Comment, id=comment_id)
         if comment.user != request.user:
