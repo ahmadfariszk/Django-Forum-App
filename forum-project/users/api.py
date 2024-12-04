@@ -21,6 +21,7 @@ def create_user(request, payload: UserSerializer):
     return user
 
 @api.put("/users/{user_id}", response=UserSerializer)
+@api.login_required
 def update_user(request, user_id: int, payload: UserSerializer):
     user = get_object_or_404(User, id=user_id)
     for attr, value in payload.dict().items():
@@ -29,6 +30,7 @@ def update_user(request, user_id: int, payload: UserSerializer):
     return user
 
 @api.delete("/users/{user_id}")
+@api.login_required
 def delete_user(request, user_id: int):
     user = get_object_or_404(User, id=user_id)
     user.delete()
