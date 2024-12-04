@@ -8,7 +8,6 @@ api = NinjaAPI(urls_namespace="posts_api")
 
 # Create a post
 @api.post("/posts", response=PostSerializer)
-@api.login_required
 def create_post(request, data: PostSerializer):
     post = Post.objects.create(**data.dict())
     return post
@@ -28,7 +27,6 @@ def get_post(request, post_id: int):
 
 # update a post
 @api.put("/posts/{post_id}", response=PostSerializer)
-@api.login_required
 def update_post(request, post_id: int, data: PostSerializer):
     post = Post.objects.get(id=post_id)
     if post.user != request.user:
@@ -40,7 +38,6 @@ def update_post(request, post_id: int, data: PostSerializer):
 
 # delete a post
 @api.delete("/posts/{post_id}", response={200: str, 404: str})
-@api.login_required
 def delete_post(request, post_id: int):
     try:
         post = Post.objects.get(id=post_id)

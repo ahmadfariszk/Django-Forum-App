@@ -4,7 +4,7 @@ from .serializers import UserSerializer  # Define this later
 from django.shortcuts import get_object_or_404
 from typing import List
 
-api = NinjaAPI(urls_namespace="users_api")
+api = NinjaAPI()
 
 @api.get("/users", response=List[UserSerializer])
 def list_users(request):
@@ -21,7 +21,6 @@ def create_user(request, payload: UserSerializer):
     return user
 
 @api.put("/users/{user_id}", response=UserSerializer)
-@api.login_required
 def update_user(request, user_id: int, payload: UserSerializer):
     user = get_object_or_404(User, id=user_id)
     if user.user != request.user:
@@ -32,7 +31,6 @@ def update_user(request, user_id: int, payload: UserSerializer):
     return user
 
 @api.delete("/users/{user_id}")
-@api.login_required
 def delete_user(request, user_id: int):
     user = get_object_or_404(User, id=user_id)
     if user.user != request.user:
