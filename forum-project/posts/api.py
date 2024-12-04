@@ -43,7 +43,7 @@ def get_posts(request, page_size: int = 10):
 # Get a single post
 @api.get("/get/{post_id}", response=PostSerializer)
 def get_post(request, post_id: int):
-    post = Post.objects.get(id=post_id)
+    post = Post.objects.annotate(comment_count=Count('comments')).get(id=post_id)
     return post
 
 # update a post
