@@ -7,6 +7,7 @@ from ninja.pagination import paginate
 from ninja_jwt.authentication import JWTAuth
 from django.http import JsonResponse
 from typing import Dict
+from django.db.models import Count
 
 api = NinjaAPI(urls_namespace="posts_api")
 
@@ -36,7 +37,7 @@ def create_post(request, data: PostSerializer):
 @api.get("/getall", response=List[PostSerializer])
 @paginate()
 def get_posts(request, page_size: int = 10):
-    posts = Post.objects.all()
+    posts = Post.objects.annotate(comment_count=Count('comments')).all()
     return posts
 
 # Get a single post

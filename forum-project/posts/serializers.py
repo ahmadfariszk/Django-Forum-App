@@ -10,6 +10,7 @@ class PostSerializer(Schema):
     image_url: Optional[str] = None  # Make image_url optional
     created_at: Optional[str] = Field(None, alias="createdAt")  # Automatically set by the database, so optional
     updated_at: Optional[str] = Field(None, alias="updatedAt")  # Automatically set by the database, so optional
+    comment_count: Optional[int] = None
 
     class Config:
         # To make sure the date fields are returned as string formatted dates
