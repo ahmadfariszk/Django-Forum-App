@@ -24,6 +24,8 @@ def create_user(request, payload: UserSerializer):
 @api.login_required
 def update_user(request, user_id: int, payload: UserSerializer):
     user = get_object_or_404(User, id=user_id)
+    if user.user != request.user:
+        return 403, {"message": "You do not have permission to update this user."}
     for attr, value in payload.dict().items():
         setattr(user, attr, value)
     user.save()
@@ -33,5 +35,7 @@ def update_user(request, user_id: int, payload: UserSerializer):
 @api.login_required
 def delete_user(request, user_id: int):
     user = get_object_or_404(User, id=user_id)
+    if user.user != request.user:
+        return 403, {"message": "You do not have permission to delete this user."}
     user.delete()
     return {"success": True}
