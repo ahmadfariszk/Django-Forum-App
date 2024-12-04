@@ -6,16 +6,27 @@ from django.shortcuts import get_object_or_404
 from posts.models import Post
 from django.contrib.auth.models import User
 from ninja.pagination import paginate
+from django.http import JsonResponse
+from ninja_jwt.authentication import JWTAuth
 
 api = NinjaAPI(urls_namespace="comments_api")
 
 # Create a comment
-@api.post("/comments", response=CommentSerializer)
+@api.post("/create", response=CommentSerializer, auth=JWTAuth())
 def create_comment(request, data: CommentSerializer):
-    post = get_object_or_404(Post, id=data.post)
-    user = get_object_or_404(User, id=data.user)
-    comment = Comment.objects.create(user=user, post=post, content=data.content)
-    return comment
+    # Get the currently logged-in user
+    user: User = request.user
+    print(user, request.user.id, user.is_authenticated)
+    if user.is_authenticated:
+        comment = Comment.objects.create(
+            post_id=data.post_id,
+            user_id=user.id,
+            text=data.text,
+        )
+        return comment
+    else:
+        # Return an error if the user is not authenticated
+        return JsonResponse({'detail': 'User is not logged in'}, status=401)
 
 # Get a list of comments
 @api.get("/comments", response=List[CommentSerializer])
