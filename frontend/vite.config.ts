@@ -9,7 +9,9 @@ declare module "@remix-run/node" {
 }
 
 export default defineConfig({
+  base: '/Django-Forum-App/',
   plugins: [
+    
     remix({
       future: {
         v3_fetcherPersist: true,
@@ -18,6 +20,7 @@ export default defineConfig({
         v3_singleFetch: true,
         v3_lazyRouteDiscovery: true,
       },
+      basename: '/Django-Forum-App/',
       ssr: false,
     }),
     tsconfigPaths(),
