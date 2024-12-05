@@ -5,4 +5,5 @@ class UserSerializer(Schema):
     id: Optional[int] = None
     username: str
     email: str
+    password: str
     name: Optional[str] = ''
