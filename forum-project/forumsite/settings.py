@@ -35,6 +35,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://ahmadfariszk.github.io"
 ]
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # Allow these HTTP methods for CORS requests
 CORS_ALLOW_METHODS = [
     'GET',
