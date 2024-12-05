@@ -46,4 +46,6 @@ Other than the SSL certificate issue mentioned above, there are some TODO or iss
 
     TODO: Add handling for pagination in frontend.
 
+- TODO: Remove hashed password from the response
+
 
