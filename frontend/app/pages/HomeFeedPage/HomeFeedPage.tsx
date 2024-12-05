@@ -237,7 +237,7 @@ export const HomeFeedPage = () => {
               <PostCard
                 title={post.title}
                 key={post.id}
-                userName={post.username}
+                username={post.username}
                 imageUrl={post.image_url}
                 caption={post.caption}
                 createdAt={post.created_at}
