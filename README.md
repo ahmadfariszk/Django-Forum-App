@@ -1,5 +1,5 @@
 # Django Forum App
-## To access the deployed site follow these steps:
+## To access the deployed site, follow these steps:
 These steps are mandatory to get a full experience of the web app -- otherwise API calls would be blocked.
 
 1. Open your favourite browser (preferably desktop, I did not optimise it for mobile)
