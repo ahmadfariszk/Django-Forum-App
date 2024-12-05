@@ -28,7 +28,7 @@ DEBUG = True
 
 APPEND_SLASH=False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['13.211.124.176']
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Frontend URL
