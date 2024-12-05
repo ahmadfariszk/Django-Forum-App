@@ -4,6 +4,8 @@ from .serializers import UserSerializer  # Define this later
 from django.shortcuts import get_object_or_404
 from typing import List
 from django.contrib.auth.hashers import make_password
+from ninja_jwt.authentication import JWTAuth
+from django.http import JsonResponse
 
 api = NinjaAPI()
 
@@ -15,6 +17,18 @@ def list_users(request):
 def get_user(request, user_id: int):
     user = get_object_or_404(User, id=user_id)
     return user
+
+@api.get("/getCurrentUser", response=UserSerializer, auth=JWTAuth())
+def get_current_user(request):
+    user: User = request.user
+
+    # Ensure the user is authenticated
+    if user.is_authenticated:
+        # Create the post and automatically associate it with the logged-in user
+        return user
+    else:
+        # Return an error if the user is not authenticated
+        return JsonResponse({'message': 'User is not logged in'}, status=401)
 
 @api.post("/create")
 def create_user(request, payload: UserSerializer):

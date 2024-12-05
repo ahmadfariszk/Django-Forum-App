@@ -14,11 +14,18 @@ import { TextareaWithLabel } from "./TextareaWithLabel";
 import { Textarea } from "../shadcn-ui/Textarea";
 
 interface CreatePostOrCommentCardProps {
+  cardTitle?: string;
+  cardDescription?: string;
+  submitButtonText?: string;
   caption?: string | null;
   title?: string;
+  imageUrl?: string;
+  text?: string;
   isComment?: boolean; // Determines whether this is a post or a comment card
   onSubmitPost?: (title: string, caption: string, imageUrl?: string) => void; // Function to handle post submission
   onSubmitComment?: (text: string) => void; // Function to handle comment submission
+  onCancel?: () => void;
+  hasCancelButton?: boolean;
 }
 
 export const CreatePostOrCommentCard: React.FC<
@@ -26,14 +33,21 @@ export const CreatePostOrCommentCard: React.FC<
 > = ({
   caption,
   title,
+  imageUrl,
+  text,
   isComment = false, // Default to false, assuming the card is for creating a post
   onSubmitPost,
   onSubmitComment,
+  cardTitle,
+  cardDescription,
+  submitButtonText,
+  hasCancelButton,
+  onCancel,
 }) => {
   const [postTitle, setPostTitle] = useState(title || "");
   const [postCaption, setPostCaption] = useState(caption || "");
-  const [postImage, setPostImage] = useState<File | null>(null);
-  const [commentText, setCommentText] = useState("");
+  const [postImage, setPostImage] = useState(imageUrl || "");
+  const [commentText, setCommentText] = useState(text || "");
 
   // Handle text changes for comment or post fields
   const handleCommentChange = (
@@ -55,22 +69,26 @@ export const CreatePostOrCommentCard: React.FC<
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files ? event.target.files[0] : null;
-    if (file) setPostImage(file);
+    setPostImage(event.target.value);
   };
 
   // Handle post submission
   const handlePostSubmit = () => {
     if (onSubmitPost && postTitle.trim() && postCaption.trim()) {
-      onSubmitPost(
-        postTitle,
-        postCaption,
-        postImage ? URL.createObjectURL(postImage) : undefined
-      );
+      onSubmitPost(postTitle, postCaption, postImage);
       setPostTitle(""); // Clear the input after submission
       setPostCaption("");
-      setPostImage(null); // Clear image input
+      setPostImage(""); // Clear image input
     }
+  };
+
+  // Handle post submission
+  const handleCancel = () => {
+    setPostTitle(""); // Clear the input after submission
+    setPostCaption("");
+    setPostImage(""); // Clear image input
+    setCommentText(""); // Clear the input after submission
+    onCancel?.();
   };
 
   // Handle comment submission
@@ -83,21 +101,10 @@ export const CreatePostOrCommentCard: React.FC<
 
   return (
     <Card className="w-[600px] mb-2">
-      {isComment ? (
-        <CardHeader>
-          <CardTitle>Add a comment</CardTitle>
-          <CardDescription>
-            This comment will be visible to all other users.
-          </CardDescription>
-        </CardHeader>
-      ) : (
-        <CardHeader>
-          <CardTitle>Create a New Post</CardTitle>
-          <CardDescription>
-            This post will be visible to all other users.
-          </CardDescription>
-        </CardHeader>
-      )}
+      <CardHeader>
+        <CardTitle>{cardTitle}</CardTitle>
+        <CardDescription>{cardDescription}</CardDescription>
+      </CardHeader>
 
       <CardContent>
         {isComment ? (
@@ -125,19 +132,26 @@ export const CreatePostOrCommentCard: React.FC<
               placeholder="Write your post content.."
             />
             <InputWithLabel
-              label="Upload an Image"
-              type="file"
+              label="Image URL"
+              type="text"
+              value={postImage}
               onChange={handleImageUpload}
+              placeholder="Enter URL of your image"
             />
           </div>
         )}
       </CardContent>
 
       <CardFooter className="flex justify-end -mt-4">
+        {hasCancelButton && (
+          <Button variant={"outline"} className="mr-4" onClick={handleCancel}>
+            Cancel
+          </Button>
+        )}
         {isComment ? (
-          <Button onClick={handleCommentSubmit}>Add</Button>
+          <Button onClick={handleCommentSubmit}>{submitButtonText}</Button>
         ) : (
-          <Button onClick={handlePostSubmit}>Create</Button>
+          <Button onClick={handlePostSubmit}>{submitButtonText}</Button>
         )}
       </CardFooter>
     </Card>

@@ -51,6 +51,23 @@ def get_comment(request, comment_id: int):
     comment_data['username'] = comment.user.username 
     return comment_data
 
+# Get a list of comments for a specific post
+@api.get("/getall/{post_id}", response=List[CommentSerializer])
+@paginate()
+def get_comments(request, post_id: int):
+    # Filter comments by the provided post_id
+    comments = Comment.objects.filter(post_id=post_id).select_related('user')
+    
+    # Serialize the comments and add additional user data (like username)
+    serialized_comments = []
+    for comment in comments:
+        comment_data = CommentSerializer.from_orm(comment).dict()
+        comment_data['username'] = comment.user.username  # Add username to the response
+        serialized_comments.append(comment_data)
+    
+    return serialized_comments
+
+
 # Get number of comments for a post ID
 @api.get("/getnumber/{post_id}", response={200: int})
 def get_comments(request, post_id: int):

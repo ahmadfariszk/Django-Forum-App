@@ -8,21 +8,27 @@ import {
   CardTitle,
 } from "~/shared/shadcn-ui/Card";
 import { cn } from "../utils/cn";
+import { Pencil, Trash2 } from "lucide-react";
+import IconButton from "./IconButton";
 
-interface PostsCardProps {
-  userName: string;
+interface PostCardProps {
+  username: string;
   imageUrl?: string;
   caption: string | null;
   createdAt: string;
   totalComments?: number;
   isIndividualPostPage?: boolean;
   title: string;
+  isEditable?: boolean;
+  isDeletable?: boolean;
   onClickTotalComments?: () => void;
   onClickComment?: () => void;
+  onClickEdit?: () => void;
+  onClickDelete?: () => void;
 }
 
-export const PostsCard: React.FC<PostsCardProps> = ({
-  userName,
+export const PostCard: React.FC<PostCardProps> = ({
+  username,
   imageUrl,
   caption,
   createdAt,
@@ -30,15 +36,39 @@ export const PostsCard: React.FC<PostsCardProps> = ({
   isIndividualPostPage,
   title,
   onClickTotalComments,
-  onClickComment
+  onClickComment,
+  isEditable,
+  isDeletable,
+  onClickDelete,
+  onClickEdit,
 }) => {
   return (
     <>
       <Card className="w-[600px]">
         <CardHeader>
-          <CardTitle>{title}</CardTitle>
+          <CardTitle className="flex items-center justify-between">
+            {title}{" "}
+            <div className="flex gap-1">
+              {isEditable && (
+                <IconButton
+                  icon={<Pencil />}
+                  variant={"outline"}
+                  className="h-8 mx-0"
+                  onClick={onClickEdit}
+                />
+              )}
+              {isDeletable && (
+                <IconButton
+                  icon={<Trash2 />}
+                  variant={"outline"}
+                  className="h-8 mx-0"
+                  onClick={onClickDelete}
+                />
+              )}
+            </div>
+          </CardTitle>
           <CardDescription>
-            by <strong>{userName}</strong> posted on{" "}
+            by <strong>{username}</strong> posted on{" "}
             {new Date(createdAt).toLocaleString()}
           </CardDescription>
         </CardHeader>
@@ -67,7 +97,9 @@ export const PostsCard: React.FC<PostsCardProps> = ({
         ) : (
           <CardFooter className="flex justify-between">
             {totalComments ? (
-              <Button onClick={onClickTotalComments} variant="outline">{totalComments} Comments</Button>
+              <Button onClick={onClickTotalComments} variant="outline">
+                {totalComments} Comments
+              </Button>
             ) : (
               <p className="text-zinc-600">No comments yet.</p>
             )}

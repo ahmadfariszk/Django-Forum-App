@@ -1,31 +1,35 @@
+import { StringToBoolean } from "class-variance-authority/types";
+
 // TypeScript interface matching the Django Post model
 export type Post = {
     id: number;
-    user: {
-      id: number;
-      name: string; // Assuming "name" is a field in the User model
-    };
+    username: string;
+    user_id: number
     image_url?: string; 
     caption: string | null;
     created_at: string; // ISO 8601 string from the backend
     updated_at: string; // ISO 8601 string from the backend
     comment_count: number;
     title: string;
+    is_editable: boolean;
+    is_deletable: boolean;
   }
 
   export type Comment = {
     id: number;
-    user: {
-      id: number;
-      name: string; // Assuming "name" is a field in the User model
-    };
-    post: Post; 
+    post_id: number;
+    user_id: number;
+    username: string;
     text: string;
     created_at: string;
     updated_at: string;
+    is_editable: boolean;
+    is_deletable: boolean;
   }
 
   export type User = {
-    email: string;
+    id: number;
+    username: string;
     name: string;
+    email: string;
   }

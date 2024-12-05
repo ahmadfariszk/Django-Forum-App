@@ -3,17 +3,14 @@ import React, { useEffect } from "react";
 import { User } from "../constants/modelTypes";
 import { LogOut, Podcast } from "lucide-react";
 import IconButton from "./IconButton";
+import { Button } from "../shadcn-ui/Button";
 
 type HeaderProps = {
-  user?: User;
+  user?: User | null;
 };
 
 export const Header = ({ user }: HeaderProps) => {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!user) navigate('login')
-  })
 
   return (
     <header className="bg-gray-800 text-white p-4 px-8 flex items-center justify-between">
@@ -32,9 +29,14 @@ export const Header = ({ user }: HeaderProps) => {
             <span className="text-sm mt-1 mr-2 text-zinc-300">
               Logged in as
             </span>
-            {`${user.name}`}{" "}
+            {`${user.username}`}{" "}
             <span className="text-sm mt-1 ml-4 text-zinc-300">|</span>{" "}
-            <IconButton icon={<LogOut />} onClick={() => {navigate('/login')}} />
+            <IconButton
+              icon={<LogOut />}
+              onClick={() => {
+                navigate("/login");
+              }}
+            />
           </div>
         ) : (
           <div className="flex space-x-4">
@@ -42,13 +44,13 @@ export const Header = ({ user }: HeaderProps) => {
               to="/login"
               className="text-lg font-medium hover:text-blue-400"
             >
-              Login
+              <Button variant={"secondary"}>Login</Button>
             </Link>
             <Link
               to="/signup"
               className="text-lg font-medium hover:text-blue-400"
             >
-              Signup
+              <Button variant={"secondary"}>Sign Up</Button>
             </Link>
           </div>
         )}

@@ -5,12 +5,17 @@ import {
   Scripts,
   ScrollRestoration,
   useLocation,
+  useNavigate,
 } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
 
 import "./tailwind.css";
 import { Header } from "./shared/components/Header";
 import { mockUser } from "./test/mockData";
+import { useEffect, useState } from "react";
+import { BASE_API_URL } from "./shared/constants/apiTypes";
+import { UserProvider } from "./shared/utils/userContext";
+import { getAccessToken } from "./shared/utils/browserStorage";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -27,7 +32,41 @@ export const links: LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const shouldShowHeader = !["/login", "/signup"].includes(location.pathname);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch(
+          `${BASE_API_URL}/api/users/getCurrentUser`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json", // Ensure it's JSON
+              Authorization: `Bearer ${getAccessToken(localStorage, sessionStorage)}`, // Add the Bearer token here
+            },
+          }
+        );
+        if (!response.ok) {
+          const error = new Error(
+            `Error fetching current user: ${response.status}`
+          );
+          (error as any).status = response.status;
+          throw error;
+        }
+        const data = await response.json();
+        console.log(data);
+        // const data = mockPosts; // Replace fetch with mock data
+        setUser(data);
+        if ("/login"?.includes(location.pathname)) navigate("/")
+      } catch (err: any) {
+        console.error("Failed to get user", err.status);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   return (
     <html lang="en">
@@ -38,8 +77,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {shouldShowHeader && <Header user={mockUser} />}
-        {children}
+        <UserProvider value={user}>
+          {shouldShowHeader && <Header user={user} />}
+          {children}
+        </UserProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
