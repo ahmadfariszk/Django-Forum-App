@@ -53,7 +53,7 @@ def get_comment(request, comment_id: int):
 
 # Get a list of comments for a specific post
 @api.get("/getall/{post_id}", response=List[CommentSerializer])
-@paginate()
+# @paginate()
 def get_comments(request, post_id: int):
     # Filter comments by the provided post_id
     comments = Comment.objects.filter(post_id=post_id).select_related('user')

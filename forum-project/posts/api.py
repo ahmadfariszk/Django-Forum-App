@@ -35,8 +35,8 @@ def create_post(request, data: PostSerializer):
 
 # Get a list of posts
 @api.get("/getall", response=List[PostSerializer])
-@paginate()
-def get_posts(request, page_size: int = 10):
+# @paginate()
+def get_posts(request):
     posts = Post.objects.annotate(comment_count=Count('comments'))\
         .select_related('user')
     # Manually add username/datetimes to the serialized data
