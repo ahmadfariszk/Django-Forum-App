@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['13.211.124.176']
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Frontend URL
+    "https://ahmadfariszk.github.io/Django-Forum-App/"
 ]
 
 # Allow these HTTP methods for CORS requests
