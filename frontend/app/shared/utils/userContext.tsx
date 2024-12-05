@@ -1,6 +1,6 @@
-// userContext.tsx
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useState } from "react";
 
+// Define the User interface
 interface User {
   id?: number;
   username?: string;
@@ -8,18 +8,38 @@ interface User {
   name?: string;
 }
 
-const UserContext = createContext<User | null>(null);
+// Create the context with a type for User or null
+const UserContext = createContext<{
+  user: User | null;
+  updateUser: (user: User | null) => void;
+} | undefined>(undefined);
 
+// Custom hook to use the UserContext
 export const useUser = () => {
-  return useContext(UserContext);
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("useUser must be used within a UserProvider");
+  }
+  return context;
 };
 
-// UserProvider component with typed children prop
+// UserProvider component with typed children prop and the ability to update the user
 interface UserProviderProps {
-  children: React.ReactNode; // Explicitly typing 'children' prop
-  value: User | null
+  children: React.ReactNode;
+  initialUser: User | null;
 }
 
-export const UserProvider: React.FC<UserProviderProps> = ({ children, value }) => {
-  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
+export const UserProvider: React.FC<UserProviderProps> = ({ children, initialUser }) => {
+  const [user, setUser] = useState<User | null>(initialUser);
+
+  // Function to update the user
+  const updateUser = (newUser: User | null) => {
+    setUser(newUser);
+  };
+
+  return (
+    <UserContext.Provider value={{ user, updateUser }}>
+      {children}
+    </UserContext.Provider>
+  );
 };

@@ -1,6 +1,7 @@
 import { useNavigate } from "@remix-run/react";
 import { Loader } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import AlertDialog from "~/shared/components/AlertDialog";
 import { CreatePostOrCommentCard } from "~/shared/components/CreatePostOrCommentCard";
 import PaginationWithData from "~/shared/components/PaginationWithData";
@@ -20,7 +21,7 @@ export const HomeFeedPage = () => {
   const [editingPostId, setEditingPostId] = useState(0);
   const [deletingPostId, setDeletingPostId] = useState(0);
   const [isOpenConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false);
-  const user = useUser();
+  const { user } = useUser();
 
   useEffect(() => {
     fetchPosts();
@@ -30,13 +31,15 @@ export const HomeFeedPage = () => {
     try {
       const response = await fetch(`${BASE_API_URL}/api/posts/getall`);
       if (!response.ok) {
-        throw new Error(`Error fetching posts: ${response.status}`);
+        const error = new Error(`Error creating post: ${response.status}`);
+        (error as any).status = response.status;
+        throw error;
       }
       const data = await response.json();
       console.log(data, user);
       // const data = mockPosts; // Replace fetch with mock data
 
-      const updatedItems = data?.items?.map((item) => ({
+      const updatedItems = data?.map((item: Post) => ({
         ...item,
         is_editable: item.user_id === user?.id,
         is_deletable: item.user_id === user?.id,
@@ -46,6 +49,7 @@ export const HomeFeedPage = () => {
     } catch (err: any) {
       setPostCount(0);
       setError(err.message || "An unexpected error occurred");
+      if (err.status !== 401) toast.error('Failed to retrieve forum posts, try contacting the admin to report this issue.')
     } finally {
       setIsLoading(false);
     }
@@ -70,6 +74,7 @@ export const HomeFeedPage = () => {
         throw error;
       }
       await fetchPosts();
+      toast.success('Post created! View your post in the list of posts below.')
     } catch (err: any) {
       console.error("Failed to create post", err.status);
       if (err.status === 401) {
@@ -161,9 +166,6 @@ export const HomeFeedPage = () => {
       caption,
       image_url,
     });
-    console.log("Title:", title);
-    console.log("caption: ", caption);
-    console.log("image_url: ", image_url);
   };
 
   const handleEditPost = async (
@@ -176,10 +178,6 @@ export const HomeFeedPage = () => {
       caption,
       image_url,
     }, editingPostId);
-    console.log("Title:", title);
-    console.log("caption: ", caption);
-    console.log("image_url: ", image_url);
-    console.log("Edited post ID", editingPostId);
   };
 
   const handleClickEdit = (postId: number) => {
@@ -213,10 +211,10 @@ export const HomeFeedPage = () => {
       />
       <div className="text-2xl my-4 text-white w-[600px] flex gap-2 items-center">
         Posts{" "}
-        {isLoading ? <Loader className="animate-spin" /> : `(${postCount})`}
+        {isLoading && <Loader className="animate-spin" />}
       </div>
       {error && <p className="text-red-500">{error}</p>}
-      {!isLoading && !error && posts.length === 0 && <p>No posts available.</p>}
+      {!isLoading && !error && posts?.length === 0 && <p>No posts available.</p>}
       {!isLoading &&
         !error &&
         posts?.map((post) => (

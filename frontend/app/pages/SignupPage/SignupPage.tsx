@@ -3,6 +3,7 @@ import LoginOrSignupCard from "~/shared/components/LoginOrSignupCard";
 import { BASE_API_URL, LoginSignupPayload } from "~/shared/constants/apiTypes";
 import { callLoginApi } from "../LoginPage/LoginPage";
 import { useNavigate } from "@remix-run/react";
+import { toast } from "react-toastify";
 
 const SignupPage = () => {
   const navigate = useNavigate();
@@ -19,11 +20,13 @@ const SignupPage = () => {
       .then(async (data) => {
         if (data?.statusCode === 200) {
           console.log("Signup successful");
+          toast.success('Account was created! Redirecting..')
           await callLoginApi(payload, navigate);
         }
       })
       .catch((error) => {
-        console.error("Error during login:", error);
+        console.error("Error during sign up:", error);
+        toast.error('Failed to sign up, try contacting the admin to report this issue.')
       });
   };
 
@@ -34,9 +37,6 @@ const SignupPage = () => {
       username,
       password,
     });
-    console.log("Username:", username);
-    console.log("Email:", email);
-    console.log("Password:", password);
   };
 
   return (

@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "@remix-run/react";
 import { Loader } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import AlertDialog from "~/shared/components/AlertDialog";
 import { CommentCard } from "~/shared/components/CommentCard";
 import { CreatePostOrCommentCard } from "~/shared/components/CreatePostOrCommentCard";
@@ -28,7 +29,7 @@ export const IndividualPostPage = () => {
   const [isCommentLoading, setIsCommentLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const urlParams = useParams();
-  const user = useUser();
+  const { user } = useUser();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,7 +44,9 @@ export const IndividualPostPage = () => {
         `${BASE_API_URL}/api/posts/get/${urlParams.postId}`
       );
       if (!response.ok) {
-        throw new Error(`Error fetching posts: ${response.status}`);
+        const error = new Error(`Error creating post: ${response.status}`);
+        (error as any).status = response.status;
+        throw error;
       }
       const data = await response.json();
       setPost({
@@ -53,6 +56,9 @@ export const IndividualPostPage = () => {
       });
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred");
+      if (err.status !== 401) toast.error(
+        "Failed to retrieve this post's contents, try contacting the admin to report this issue."
+      );
     } finally {
       setIsPostLoading(false);
     }
@@ -65,11 +71,13 @@ export const IndividualPostPage = () => {
         `${BASE_API_URL}/api/comments/getall/${urlParams.postId}`
       );
       if (!response.ok) {
-        throw new Error(`Error fetching comments: ${response.status}`);
+        const error = new Error(`Error creating post: ${response.status}`);
+        (error as any).status = response.status;
+        throw error;
       }
       const data = await response.json();
       setComments(
-        data?.items?.map((item) => ({
+        data?.map((item: Comment) => ({
           ...item,
           is_editable: item.user_id === user?.id,
           is_deletable: item.user_id === user?.id,
@@ -78,6 +86,9 @@ export const IndividualPostPage = () => {
       setCommentsCount(data.count);
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred");
+      if (err.status !== 401) toast.error(
+        "Failed to retrieve comments for this post, try contacting the admin to report this issue."
+      );
     } finally {
       setIsCommentLoading(false);
     }
@@ -100,6 +111,7 @@ export const IndividualPostPage = () => {
         throw new Error(`Error creating comment: ${response.status}`);
       }
       await fetchComments();
+      toast.success('Comment added! View your comment for this post in the list of posts below.')
     } catch (err: any) {
       if (err.status === 401) {
         navigate("/login");
@@ -336,12 +348,7 @@ export const IndividualPostPage = () => {
 
       {/* Comments */}
       <div className="text-2xl text-white w-[600px] flex gap-2 items-center">
-        Comments{" "}
-        {isCommentLoading ? (
-          <Loader className="animate-spin" />
-        ) : (
-          `(${commentsCount})`
-        )}
+        Comments {isCommentLoading && <Loader className="animate-spin" />}
       </div>
       {!isCommentLoading &&
         !error &&
@@ -375,14 +382,20 @@ export const IndividualPostPage = () => {
       <AlertDialog
         isOpen={isOpenConfirmDeleteModal}
         setIsOpen={setOpenConfirmDeleteModal}
-        title={`Delete ${deletingCommentId ? 'Comment' : 'Post'}`}
-        description={`This will permanently delete your ${deletingCommentId ? 'comment' : 'post'}.`}
-        text={
-          `Are you sure you want to delete this ${deletingCommentId ? 'comment' : 'post'}? It will no longer be visible to others.`
-        }
+        title={`Delete ${deletingCommentId ? "Comment" : "Post"}`}
+        description={`This will permanently delete your ${
+          deletingCommentId ? "comment" : "post"
+        }.`}
+        text={`Are you sure you want to delete this ${
+          deletingCommentId ? "comment" : "post"
+        }? It will no longer be visible to others.`}
         submitButtonText={"Delete"}
-        onSubmit={deletingCommentId ? handleConfirmDelete : handleConfirmDeletePost}
-        onCancel={deletingCommentId ? handleCancelDelete : handleCancelDeletePost}
+        onSubmit={
+          deletingCommentId ? handleConfirmDelete : handleConfirmDeletePost
+        }
+        onCancel={
+          deletingCommentId ? handleCancelDelete : handleCancelDeletePost
+        }
       />
     </div>
   );

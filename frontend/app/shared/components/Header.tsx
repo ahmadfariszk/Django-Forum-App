@@ -4,6 +4,7 @@ import { User } from "../constants/modelTypes";
 import { LogOut, Podcast } from "lucide-react";
 import IconButton from "./IconButton";
 import { Button } from "../shadcn-ui/Button";
+import { removeAccessToken } from "../utils/browserStorage";
 
 type HeaderProps = {
   user?: User | null;
@@ -34,6 +35,7 @@ export const Header = ({ user }: HeaderProps) => {
             <IconButton
               icon={<LogOut />}
               onClick={() => {
+                removeAccessToken(localStorage, sessionStorage)
                 navigate("/login");
               }}
             />

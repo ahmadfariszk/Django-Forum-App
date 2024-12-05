@@ -1,9 +1,12 @@
 import { Link, useNavigate } from "@remix-run/react";
 import React from "react";
+import { toast } from "react-toastify";
+import { fetchCurrentUser } from "~/root";
 import LoginOrSignupCard from "~/shared/components/LoginOrSignupCard";
 import { BASE_API_URL, LoginSignupPayload } from "~/shared/constants/apiTypes";
+import { useUser } from "~/shared/utils/userContext";
 
-export const callLoginApi = async (payload: LoginSignupPayload, navigate?: any) => {
+export const callLoginApi = async (payload: LoginSignupPayload, navigate?: any, updateUser?: any) => {
   fetch(`${BASE_API_URL}/api/token`, {
     method: "POST",
     headers: {
@@ -14,13 +17,12 @@ export const callLoginApi = async (payload: LoginSignupPayload, navigate?: any) 
     .then((response) => response.json()) // Parse the response as JSON
     .then((data) => {
       if (data.access && data.refresh) {
-        console.log("Login successful");
-        console.log("Access token:", data.access);
-        console.log("Refresh token:", data.refresh);
         localStorage.setItem('access_token', data.access);
         sessionStorage.setItem('access_token', data.access);
-        navigate('/');
+        navigate?.('/')
+        fetchCurrentUser(updateUser, navigate)
       } else {
+        toast.error('Failed to login, make sure the credentials are correct.')
         console.log("Login failed:", data.detail || "Unknown error");
       }
     })
@@ -30,6 +32,9 @@ export const callLoginApi = async (payload: LoginSignupPayload, navigate?: any) 
 };
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const { updateUser } = useUser();
+
   const handleLoginOrSignup = async (
     username: string,
     email: string,
@@ -40,10 +45,7 @@ const LoginPage = () => {
       email,
       username,
       password,
-    });
-    console.log("Username:", username);
-    console.log("Email:", email);
-    console.log("Password:", password);
+    }, navigate, updateUser);
   };
 
   return (
