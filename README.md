@@ -1,12 +1,15 @@
 # Django Forum App
-## To Access the deployed site follow these steps:
-1. Access backend and click advanced > Proceed (This is because the SSL certificate is self-signed)
+## To access the deployed site follow these steps:
+1. Open your favourite browser (preferably desktop, I did not optimise it for mobile)
 
-    Backend: Deployed at https://13.211.124.176/
+2. Go to backend site `https://13.211.124.176/`. You might see a "Your connection is not private/secure" or something along those lines, depending on your browser. This is caused by the SSL certificate being self-signed.
 
-    You should see a "Not Found" if it works
+3. Click `Advanced` and proceed to the website anyway, to bypass the warning. For example in chrome: click on `ADVANCED` then `Proceed to view site`
 
-2. Access the frontend
+    You should see a "Not Found" if it works. This allows the browser to make API calls to the backend without being blocked
+
+
+3. Access the frontend
 
     Frontend: Deployed at https://ahmadfariszk.github.io/Django-Forum-App/
 
