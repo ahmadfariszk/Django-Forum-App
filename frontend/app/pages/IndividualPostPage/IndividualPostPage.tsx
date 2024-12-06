@@ -330,8 +330,8 @@ export const IndividualPostPage = () => {
             {...post}
             createdAt={post.created_at}
             isIndividualPostPage={true}
-            isEditable={post.user_id === user.id}
-            isDeletable={post.user_id === user.id}
+            isEditable={post.user_id === user?.id}
+            isDeletable={post.user_id === user?.id}
             onClickEdit={handleClickEditPost}
             onClickDelete={handleClickDeletePost}
           />
@@ -353,7 +353,7 @@ export const IndividualPostPage = () => {
       {!isCommentLoading &&
         !error &&
         comments?.map((comment) =>
-          editingCommentId === comment.id ? (
+          editingCommentId === comment?.id ? (
             <CreatePostOrCommentCard
               isComment={true}
               onSubmitComment={handleEditComment}
@@ -368,8 +368,8 @@ export const IndividualPostPage = () => {
             <CommentCard
               {...comment}
               createdAt={comment.created_at}
-              isDeletable={comment.user_id === user.id}
-              isEditable={comment.user_id === user.id}
+              isDeletable={comment.user_id === user?.id}
+              isEditable={comment.user_id === user?.id}
               onClickEdit={() => handleClickEdit(comment.id)}
               onClickDelete={() => handleClickDelete(comment.id)}
             />
