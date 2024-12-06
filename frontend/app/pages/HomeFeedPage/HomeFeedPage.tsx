@@ -218,37 +218,37 @@ export const HomeFeedPage = () => {
         !error &&
         posts?.map((post) => (
           <div className="pb-4">
-            {editingPostId === post.id ? (
+            {editingPostId === post?.id ? (
               <CreatePostOrCommentCard
                 onSubmitPost={handleEditPost}
                 cardTitle="Edit Post"
                 cardDescription="Your edited post will be visible to all users."
                 submitButtonText="Edit"
                 hasCancelButton={true}
-                title={post.title}
-                imageUrl={post.image_url}
-                caption={post.caption}
+                title={post?.title}
+                imageUrl={post?.image_url}
+                caption={post?.caption}
                 onCancel={handleCancelEdit}
               />
             ) : (
               <PostCard
-                title={post.title}
-                key={post.id}
-                username={post.username}
-                imageUrl={post.image_url}
-                caption={post.caption}
-                createdAt={post.created_at}
-                totalComments={post.comment_count}
+                title={post?.title}
+                key={post?.id}
+                username={post?.username}
+                imageUrl={post?.image_url}
+                caption={post?.caption}
+                createdAt={post?.created_at}
+                totalComments={post?.comment_count}
                 onClickComment={() => {
-                  handleClickComment(post.id);
+                  handleClickComment(post?.id);
                 }}
                 onClickTotalComments={() => {
-                  handleClickComment(post.id);
+                  handleClickComment(post?.id);
                 }}
-                isDeletable={post.user_id === user.id}
-                isEditable={post.user_id === user.id}
-                onClickEdit={() => handleClickEdit(post.id)}
-                onClickDelete={() => handleClickDelete(post.id)}
+                isDeletable={post.user_id === user?.id}
+                isEditable={post.user_id === user?.id}
+                onClickEdit={() => handleClickEdit(post?.id)}
+                onClickDelete={() => handleClickDelete(post?.id)}
               />
             )}
           </div>
