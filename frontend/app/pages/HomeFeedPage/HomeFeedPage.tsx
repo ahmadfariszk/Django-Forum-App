@@ -21,7 +21,7 @@ export const HomeFeedPage = () => {
   const [editingPostId, setEditingPostId] = useState(0);
   const [deletingPostId, setDeletingPostId] = useState(0);
   const [isOpenConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false);
-  const { user } = useUser();
+  const [user, setUser] = useUser();
 
   useEffect(() => {
     fetchPosts();
@@ -36,7 +36,6 @@ export const HomeFeedPage = () => {
         throw error;
       }
       const data = await response.json();
-      console.log(data, user);
       // const data = mockPosts; // Replace fetch with mock data
 
       const updatedItems = data?.map((item: Post) => ({
@@ -246,8 +245,8 @@ export const HomeFeedPage = () => {
                 onClickTotalComments={() => {
                   handleClickComment(post.id);
                 }}
-                isDeletable={post.is_deletable}
-                isEditable={post.is_editable}
+                isDeletable={post.user_id === user.id}
+                isEditable={post.user_id === user.id}
                 onClickEdit={() => handleClickEdit(post.id)}
                 onClickDelete={() => handleClickDelete(post.id)}
               />

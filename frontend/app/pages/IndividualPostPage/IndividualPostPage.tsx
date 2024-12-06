@@ -29,7 +29,7 @@ export const IndividualPostPage = () => {
   const [isCommentLoading, setIsCommentLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const urlParams = useParams();
-  const { user } = useUser();
+  const [user, setUser] = useUser();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -330,8 +330,8 @@ export const IndividualPostPage = () => {
             {...post}
             createdAt={post.created_at}
             isIndividualPostPage={true}
-            isEditable={post.is_editable}
-            isDeletable={post.is_deletable}
+            isEditable={post.user_id === user.id}
+            isDeletable={post.user_id === user.id}
             onClickEdit={handleClickEditPost}
             onClickDelete={handleClickDeletePost}
           />
@@ -368,8 +368,8 @@ export const IndividualPostPage = () => {
             <CommentCard
               {...comment}
               createdAt={comment.created_at}
-              isDeletable={comment.is_deletable}
-              isEditable={comment.is_editable}
+              isDeletable={comment.user_id === user.id}
+              isEditable={comment.user_id === user.id}
               onClickEdit={() => handleClickEdit(comment.id)}
               onClickDelete={() => handleClickDelete(comment.id)}
             />

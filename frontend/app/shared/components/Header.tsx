@@ -8,9 +8,10 @@ import { removeAccessToken } from "../utils/browserStorage";
 
 type HeaderProps = {
   user?: User | null;
+  setUser?: any
 };
 
-export const Header = ({ user }: HeaderProps) => {
+export const Header = ({ user, setUser }: HeaderProps) => {
   const navigate = useNavigate();
 
   return (
@@ -36,6 +37,7 @@ export const Header = ({ user }: HeaderProps) => {
               icon={<LogOut />}
               onClick={() => {
                 removeAccessToken(localStorage, sessionStorage)
+                setUser?.(null);
                 navigate("/login");
               }}
             />

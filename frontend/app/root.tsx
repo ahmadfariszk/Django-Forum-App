@@ -52,10 +52,13 @@ export const fetchCurrentUser = async (setUserState?: any, navigate?: any) => {
       throw error;
     }
     const data = await response.json();
-    console.log(data);
-    // const data = mockPosts; // Replace fetch with mock data
+
     setUserState?.(data);
     if ("/login"?.includes(location.pathname)) navigate?.("/")
+    if (!setUserState) return data
+    
+    // const data = mockPosts; // Replace fetch with mock data
+
   } catch (err: any) {
     console.error("Failed to get user", err.status);
   }
@@ -69,7 +72,36 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetchCurrentUser(setUser, navigate);
+    const fetchData = async (setUserState?: any, navigate?: any) => {
+      try {
+        const response = await fetch(
+          `${BASE_API_URL}/api/users/getCurrentUser`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json", // Ensure it's JSON
+              Authorization: `Bearer ${getAccessToken(localStorage, sessionStorage)}`, // Add the Bearer token here
+            },
+          }
+        );
+        if (!response.ok) {
+          const error = new Error(
+            `Error fetching current user: ${response.status}`
+          );
+          (error as any).status = response.status;
+          throw error;
+        }
+        const data = await response.json();
+    
+        setUser(data);
+        console.log('user is logged in!')
+        if ("/login"?.includes(location.pathname)) navigate?.("/")
+            
+      } catch (err: any) {
+        console.error("Failed to get user", err.status);
+      }
+    }
+
+    fetchData(); // Call the async function to fetch user data
   }, []);
 
   return (
@@ -81,8 +113,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <UserProvider initialUser={user}>
-          {shouldShowHeader && <Header user={user} />}
+        <UserProvider value={[user, setUser]}>
+          {shouldShowHeader && <Header user={user} setUser={setUser} />}
           <ToastContainer 
             className={'!w-[400px] !p-2'}
             position="top-center"

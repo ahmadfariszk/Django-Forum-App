@@ -9,10 +9,7 @@ interface User {
 }
 
 // Create the context with a type for User or null
-const UserContext = createContext<{
-  user: User | null;
-  updateUser: (user: User | null) => void;
-} | undefined>(undefined);
+export const UserContext = createContext<any | undefined>(undefined);
 
 // Custom hook to use the UserContext
 export const useUser = () => {
@@ -25,21 +22,10 @@ export const useUser = () => {
 
 // UserProvider component with typed children prop and the ability to update the user
 interface UserProviderProps {
-  children: React.ReactNode;
-  initialUser: User | null;
+  children: React.ReactNode; // Explicitly typing 'children' prop
+  value: any
 }
 
-export const UserProvider: React.FC<UserProviderProps> = ({ children, initialUser }) => {
-  const [user, setUser] = useState<User | null>(initialUser);
-
-  // Function to update the user
-  const updateUser = (newUser: User | null) => {
-    setUser(newUser);
-  };
-
-  return (
-    <UserContext.Provider value={{ user, updateUser }}>
-      {children}
-    </UserContext.Provider>
-  );
+export const UserProvider: React.FC<UserProviderProps> = ({ children, value }) => {
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

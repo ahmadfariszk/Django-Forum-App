@@ -4,9 +4,11 @@ import { BASE_API_URL, LoginSignupPayload } from "~/shared/constants/apiTypes";
 import { callLoginApi } from "../LoginPage/LoginPage";
 import { useNavigate } from "@remix-run/react";
 import { toast } from "react-toastify";
+import { useUser } from "~/shared/utils/userContext";
 
 const SignupPage = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useUser();
 
   const callSignUpApi = async (payload: LoginSignupPayload) => {
     fetch(`${BASE_API_URL}/api/users/create`, {
@@ -21,7 +23,7 @@ const SignupPage = () => {
         if (data?.statusCode === 200) {
           console.log("Signup successful");
           toast.success('Account was created! Redirecting..')
-          await callLoginApi(payload, navigate);
+          await callLoginApi(payload, navigate, setUser);
         }
       })
       .catch((error) => {

@@ -6,7 +6,7 @@ import LoginOrSignupCard from "~/shared/components/LoginOrSignupCard";
 import { BASE_API_URL, LoginSignupPayload } from "~/shared/constants/apiTypes";
 import { useUser } from "~/shared/utils/userContext";
 
-export const callLoginApi = async (payload: LoginSignupPayload, navigate?: any, updateUser?: any) => {
+export const callLoginApi = async (payload: LoginSignupPayload, navigate?: any, setUser?: any) => {
   fetch(`${BASE_API_URL}/api/token`, {
     method: "POST",
     headers: {
@@ -20,10 +20,10 @@ export const callLoginApi = async (payload: LoginSignupPayload, navigate?: any, 
         localStorage.setItem('access_token', data.access);
         sessionStorage.setItem('access_token', data.access);
         navigate?.('/')
-        fetchCurrentUser(updateUser, navigate)
+        fetchCurrentUser(setUser, navigate)
       } else {
         toast.error('Failed to login, make sure the credentials are correct.')
-        console.log("Login failed:", data.detail || "Unknown error");
+        console.error("Login failed:", data.detail || "Unknown error");
       }
     })
     .catch((error) => {
@@ -33,7 +33,7 @@ export const callLoginApi = async (payload: LoginSignupPayload, navigate?: any, 
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { updateUser } = useUser();
+  const [user, setUser] = useUser();
 
   const handleLoginOrSignup = async (
     username: string,
@@ -45,7 +45,7 @@ const LoginPage = () => {
       email,
       username,
       password,
-    }, navigate, updateUser);
+    }, navigate, setUser);
   };
 
   return (
